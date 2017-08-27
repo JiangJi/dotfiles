@@ -1,0 +1,31 @@
+[user]
+    email = jj.jijiang@gmail.com
+    name = Ji Jiang
+
+[core]
+    pager = cat
+    editor = vim
+
+[alias]
+    lg = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
+    ll = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
+
+    tags = tag -l
+    branches = branch -a
+    remotes = remote -v
+    pull = pull --ff-only
+    up = merge --ff-only
+    update = merge --ff-only
+    join = merge --no-ff
+    st = status
+[push]
+    default = simple
+
+[color]
+    branch = auto
+    diff = auto
+    interactive = auto
+    status = auto
+
+[include]
+    path = ~/.gitconfig_local
