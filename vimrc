@@ -6,6 +6,7 @@
 
 "Set mapleader
 let mapleader = ","
+let g:mapleader = ","
 "Fast reloading of the .vimrc
 map <silent> <leader>ss :source ~/.vimrc<cr>
 "Fast editing of .vimrc
@@ -13,15 +14,131 @@ map <silent> <leader>ee :e ~/.vimrc<cr>
 "When .vimrc is edited, reload it
 autocmd! bufwritepost .vimrc source ~/.vimrc
 
+" Set to auto read when a file is changed from the outside
+set autoread
+
+" Fast saving
+nmap <leader>w :w!<cr>
+
+" A buffer becomes hidden when it is abandoned
+set hid
+
+" Avoid garbled characters in Chinese language windows OS
+let $LANG='en'
+set langmenu=en
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => VIM user interface
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Set 7 lines to the cursor - when moving vertically using j/k
+set so=7
+
+" Height of the command bar
+set cmdheight=2
+
+" Don't redraw while executing macros (good performance config)
+set lazyredraw
+
+" Show matching brackets when text indicator is over them
+set showmatch
+" How many tenths of a second to blink when matching brackets
+set mat=2
+
+" No annoying sound on errors
+set noerrorbells
+set visualbell
+set t_vb=
+set tm=500
+
+" Add a bit extra margin to the left
+set foldcolumn=1
+
+" Use Unix as the standard file type
+set ffs=unix,dos,mac
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Files, backups and undo
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Turn backup off, since most stuff is in SVN, git et.c anyway...
+set nobackup
+set nowb
+set noswapfile
+
+
+""""""""""""""""""""""""""""""
+" => Visual mode related
+""""""""""""""""""""""""""""""
+" Visual mode pressing * or # searches for the current selection
+" Super useful! From an idea by Michael Naumann
+vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
+vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
+
+" Smart way to move between windows
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
+" --- Buffer ---
+" Close the current buffer
+map <leader>bd :Bclose<cr>:tabclose<cr>gT
+" Close all the buffers
+map <leader>ba :bufdo bd<cr>
+map <leader>l :bnext<cr>
+map <leader>h :bprevious<cr>
+
+" Useful mappings for managing tabs
+map <leader>tn :tabnew<cr>
+map <leader>to :tabonly<cr>
+map <leader>tc :tabclose<cr>
+map <leader>tm :tabmove 
+map <leader>t<leader> :tabnext 
+
+" Let 'tl' toggle between this and the last accessed tab
+let g:lasttab = 1
+nmap <Leader>tl :exe "tabn ".g:lasttab<CR>
+au TabLeave * let g:lasttab = tabpagenr()
+
+" Opens a new tab with the current buffer's path
+" Super useful when editing files in the same directory
+map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
+" Specify the behavior when switching between buffers 
+
+try
+  set switchbuf=useopen,usetab,newtab
+  set stal=2
+catch
+endtry
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Editing mappings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Move a line of text using ALT+[jk] or Command+[jk] on mac
+nmap <M-j> mz:m+<cr>`z
+nmap <M-k> mz:m-2<cr>`z
+vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
+vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
+
+if has("mac") || has("macunix")
+  nmap <D-j> <M-j>
+  nmap <D-k> <M-k>
+  vmap <D-j> <M-j>
+  vmap <D-k> <M-k>
+endif
+" Toggle paste mode on and off
+map <leader>pp :setlocal paste!<cr>
+
 " --- 20170809 ---
 " behavior
 set modelines=0
 set encoding=utf-8
 set scrolloff=3
 set hidden
-set visualbell
 " set relativenumber
 set undofile
+set backupdir=~/.vim/backup//,/tmp
+set directory=~/.vim/swap//,/tmp
+set undodir=~/.vim/undo//,/tmp
 " search
 nnoremap / /\v
 vnoremap / /\v
@@ -44,7 +161,6 @@ inoremap <F1> <ESC>
 nnoremap <F1> <ESC>
 vnoremap <F1> <ESC>
 inoremap jj <ESC>
-set noswapfile
 nnoremap ; :
 nnoremap <s-k> <CR>
 
@@ -59,6 +175,7 @@ set nocompatible
 
 " allow backspacing over everything in insert mode
 set backspace=indent,eol,start
+set whichwrap+=<,>,h,l,[,]
 
 set nobackup
 set history=50
@@ -94,8 +211,16 @@ filetype plugin indent on
 "auto-shift width
 set shiftwidth=2
 
+" Returns true if paste mode is enabled
+function! HasPaste()
+    if &paste
+        return 'PASTE MODE  '
+    endif
+    return ''
+endfunction
 " status line
-set statusline=[%F]%y%r%m%*%=[Line:%l/%L,Column:%c][%p%%]
+" set statusline=[%F]%y%r%m%*%=[Line:%l/%L,Column:%c][%p%%]
+set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
 set laststatus=2
 set ruler
 
